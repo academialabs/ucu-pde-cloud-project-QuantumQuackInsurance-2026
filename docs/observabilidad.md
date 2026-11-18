@@ -33,5 +33,4 @@ El bucket `_Default` tiene retención de **7 días**, configurada por Terraform 
 | `logs-signed-url-issued.png` | Explorador de logs con el filtro `jsonPayload.msg="signed_url_issued"`: las 3 subidas de `test-luca` |
 | `logs-retencion-buckets.png` | Buckets de logs `_Default` y `_Required` |
 | `logs-retencion-7-dias.png` | Columna de retención: `_Default` en 7 días |
-
-Pendiente: captura del mail de alerta (`mail-alerta.png`).
+| `mail-alerta-resuelta.png` | Mail de Google Cloud Alerting de las 20:33 (incidente resuelto), con la política, la condición y la documentación de la alerta |
