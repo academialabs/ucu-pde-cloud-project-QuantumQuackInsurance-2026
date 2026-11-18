@@ -65,13 +65,14 @@ Antes del primer commit: `terraform fmt -recursive infra`.
 - **Destroy** → Actions → *Destroy* → *Run workflow* → escribir `destroy`.
 
 ## Día de la demo
-1. Variable `ENABLE_LB=true` y correr *Deploy* a mano (crea el LB; la IP sale en el resumen del job; tarda unos minutos en responder).
-2. Subir una foto con número de siniestro `test-demo` (se borra sola a los 7 días).
-3. Probar un PDF: el servidor lo rechaza. Si se manipula el `Content-Type`, Cloud Storage responde 403 porque el tipo está firmado.
-4. `curl https://storage.googleapis.com/<bucket>/uploads/...` → 403 (bucket no público).
-5. Disparar la alerta: abrir `<url>/api/boom` un par de veces; llega el mail en ~1–3 min.
+1. Variable `ENABLE_LB=true` y correr *Deploy* a mano: crea el LB en ~3 min y la IP sale en el resumen del job.
+2. **Al principio de la demo**, abrir `<url>/api/boom` un par de veces para disparar la alerta. El mail llega unos **4 minutos** después del primer `/api/boom` (medido el 18/11): casi todo ese tiempo es la demora con la que Cloud Run publica la métrica, y el mail sale a los pocos segundos de abrirse el incidente.
+3. Subir una foto con número de siniestro `test-demo` (se borra sola a los 7 días).
+4. Probar un PDF: el servidor lo rechaza. Si se manipula el `Content-Type`, Cloud Storage responde 403 porque el tipo está firmado.
+5. `curl https://storage.googleapis.com/<bucket>/uploads/...` → 403 (bucket no público).
 6. Mostrar el dashboard *QuantumQuack* en Cloud Monitoring.
-7. Después: `ENABLE_LB=false` y correr *Destroy*. Captura del resumen (0 recursos) y de Facturación.
+7. **Al final**, mostrar el mail de la alerta que se disparó en el paso 2.
+8. Después: `ENABLE_LB=false` y correr *Destroy*. Captura del resumen (0 recursos) y de Facturación.
 
 ## Si algo falla
 | Síntoma | Causa probable | Qué hacer |
