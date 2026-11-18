@@ -1,0 +1,4 @@
+# Copiar a terraform.tfvars (está en .gitignore). En CI estos valores vienen de GitHub.
+project_id   = "quantumquack-ucu"
+alert_emails = ["integrante1@correo.ucu.edu.uy", "integrante2@correo.ucu.edu.uy", "integrante3@correo.ucu.edu.uy"]
+enable_lb    = false

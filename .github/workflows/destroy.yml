@@ -1,0 +1,55 @@
+name: Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Escribí "destroy" para borrar todo el entorno dev'
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-dev
+  cancel-in-progress: false
+
+env:
+  TF_DIR: infra/envs/dev
+  TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+  TF_VAR_alert_emails: ${{ vars.ALERT_EMAILS }}
+  TF_VAR_enable_lb: "false"
+
+jobs:
+  destroy:
+    if: ${{ github.event.inputs.confirm == 'destroy' }}
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_CI_SA }}
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.2
+
+      - name: terraform init
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform init -input=false -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tfstate"
+
+      - name: terraform destroy
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform destroy -input=false -auto-approve
+
+      - name: Evidencia del estado vacío
+        working-directory: ${{ env.TF_DIR }}
+        run: |
+          echo "### Recursos que quedan en el state" >> "$GITHUB_STEP_SUMMARY"
+          COUNT=$(terraform state list | wc -l)
+          echo "Total: $COUNT" >> "$GITHUB_STEP_SUMMARY"
+          terraform state list >> "$GITHUB_STEP_SUMMARY" || true

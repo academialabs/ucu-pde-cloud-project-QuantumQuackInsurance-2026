@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write        # OIDC para Workload Identity Federation
+  pull-requests: write   # comentar el plan en el PR
+
+env:
+  TF_DIR: infra/envs/dev
+  TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+  TF_VAR_alert_emails: ${{ vars.ALERT_EMAILS }}
+  TF_VAR_enable_lb: ${{ vars.ENABLE_LB || 'false' }}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.17.2
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive infra
+
+      - name: tflint
+        uses: terraform-linters/setup-tflint@v4
+      - run: |
+          tflint --init --config "$GITHUB_WORKSPACE/.tflint.hcl"
+          tflint --recursive --config "$GITHUB_WORKSPACE/.tflint.hcl"
+
+      - name: Checkov (seguridad del Terraform)
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infra
+          framework: terraform
+          soft_fail: true          # muestra hallazgos sin bloquear; los documentamos
+          output_format: cli
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_CI_SA }}
+
+      - name: terraform init
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform init -input=false -backend-config="bucket=${{ vars.GCP_PROJECT_ID }}-tfstate"
+
+      - name: terraform validate
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform validate
+
+      - name: terraform plan
+        id: plan
+        working-directory: ${{ env.TF_DIR }}
+        run: |
+          terraform plan -input=false -no-color -lock=false -out=tfplan | tee plan.txt
+          terraform show -json tfplan > plan.json
+
+      - name: Comentar el plan en el PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let plan = fs.readFileSync('${{ env.TF_DIR }}/plan.txt', 'utf8');
+            if (plan.length > 60000) plan = plan.slice(-60000);
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number,
+              body: '### Terraform plan\n<details><summary>Ver plan</summary>\n\n```\n' + plan + '\n```\n</details>'
+            });
+
+      - name: Infracost (costo estimado en el PR)
+        if: ${{ env.INFRACOST_API_KEY != '' }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+          infracost breakdown --path ${{ env.TF_DIR }}/plan.json --format json --out-file /tmp/infracost.json
+          infracost comment github --path /tmp/infracost.json --repo ${{ github.repository }} \
+            --pull-request ${{ github.event.pull_request.number }} --github-token ${{ github.token }} --behavior update
+
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build de la imagen
+        run: docker build -t quantumquack:ci app
+      - name: Trivy (vulnerabilidades de la imagen)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: quantumquack:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"

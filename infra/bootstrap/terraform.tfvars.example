@@ -1,0 +1,6 @@
+# Copiar a terraform.tfvars (está en .gitignore) y aplicar UNA vez a mano.
+project_id      = "quantumquack-ucu"
+github_repo     = "usuario/quantumquack"
+billing_account = "XXXXXX-XXXXXX-XXXXXX"
+alert_emails    = ["integrante1@correo.ucu.edu.uy", "integrante2@correo.ucu.edu.uy", "integrante3@correo.ucu.edu.uy"]
+budget_usd      = 5

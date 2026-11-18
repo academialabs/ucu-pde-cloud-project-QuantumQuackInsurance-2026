@@ -1,0 +1,23 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+*.tfplan
+tfplan
+plan.txt
+plan.json
+crash.log
+
+# Credenciales: nunca claves JSON en el repo
+*.json.key
+*-key.json
+credentials*.json
+
+# Node
+node_modules/
+npm-debug.log
+.env
+
+.DS_Store
