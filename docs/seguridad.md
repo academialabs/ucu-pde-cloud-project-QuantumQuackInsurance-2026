@@ -22,7 +22,7 @@ Resultado: **50 checks pasados, 8 fallidos, 0 omitidos.**
 
 - Buckets con Public Access Prevention `enforced` y uniform bucket-level access (CKV_GCP_114, CKV_GCP_29).
 - Ningún binding público sobre el bucket (CKV_GCP_28). La SA de la app tiene `objectCreator` condicionado al prefijo `uploads/`.
-- Sin roles básicos (Owner/Editor/Viewer) a nivel proyecto (CKV_GCP_117) y sin uso de la SA por defecto (CKV_GCP_46).
+- Sin roles básicos (Owner/Editor/Viewer) a nivel proyecto (CKV_GCP_117) y sin uso de la SA por defecto (CKV_GCP_46). **Alcance:** Checkov analiza el código Terraform, así que esto vale para las identidades que crea Terraform (SA de la app y SA de CI). Las cuentas personales del equipo sí tienen roles básicos (Owner y Viewer), asignados a mano fuera de Terraform. Ver [`matriz-iam.md`](matriz-iam.md).
 
 ### Resumen
 
@@ -55,3 +55,13 @@ Resultado: **7 vulnerabilidades (1 CRITICAL, 6 HIGH), todas en `libssl3`** de la
 | CVE-2026-84782 | HIGH | 3.0.18-1~deb12u2 | 3.0.22-1~deb12u2 |
 
 **Estado: resuelto** en `main` (a6650b0). La imagen base pasó a `gcr.io/distroless/nodejs22-debian13:nonroot`. Al volver a correr el CI en el PR #1, Trivy reporta **0 vulnerabilidades** en `quantumquack:ci (debian 13.7)`.
+
+## 4. Endpoint de salud: `/healthz` → `/health` (PR #3)
+
+| Campo | Detalle |
+|-------|---------|
+| Componente | `app/server.js` (endpoint de salud) y `startup_probe` en `infra/modules/container_service/main.tf` |
+| Problema | Cloud Run reserva algunas rutas que terminan en `z`. Por la URL `run.app`, `GET /healthz` devolvía un 404 de Google sin llegar al contenedor, así que no aparecía en los logs de la app. Por el load balancer sí funcionaba, por eso no se detectó en la prueba del LB. |
+| Riesgo | Un health check que no llega a la app da una señal falsa: el monitoreo externo vería "caído" con la app sana (o al revés, si se interpreta mal el 404). Además, el error no deja rastro en los logs de la app, lo que complica el diagnóstico. |
+| Mitigación | **Resuelto** en `main` (ef5111f, PR #3). El endpoint pasó a `/health` y el `startup_probe` de Cloud Run apunta ahí. La documentación de Cloud Run recomienda evitar todas las rutas que terminan en `z`. |
+| Referencia | Cloud Run — Known issues, "Reserved URL paths": https://cloud.google.com/run/docs/known-issues |

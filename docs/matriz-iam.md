@@ -4,13 +4,16 @@ Proyecto: `quantumquack-ucu`. Fuentes: `infra/bootstrap/main.tf` (CI y WIF) y `i
 
 Principio: cada identidad tiene solo lo que necesita para su tarea. Ninguna identidad automatizada usa roles básicos (Owner/Editor/Viewer), y la app no usa la SA por defecto de Compute (que tiene Editor).
 
+**Todo por código, con una excepción:** las identidades automatizadas (SA de la app y SA de CI) y sus permisos los crea Terraform. Los roles de las cuentas personales del equipo no están en Terraform: el Owner viene de crear el proyecto, y el Viewer de Gastón y Luca se dio a mano con `gcloud projects add-iam-policy-binding`.
+
 ## Matriz
 
 | Identidad | Permiso | Recurso | Por qué |
 |-----------|---------|---------|---------|
 | **Facundo** (cuenta personal) | `roles/owner` | Proyecto | Abrió el proyecto y corrió el bootstrap a mano. El bootstrap crea la SA de CI, WIF y le asigna roles a CI, así que hace falta alguien con permisos de IAM sobre el proyecto. Después de eso, los cambios van por Terraform + PR. |
-| **Gastón** (cuenta personal) | `roles/viewer` | Proyecto | Ver recursos, logs y métricas para revisar y depurar. No puede cambiar nada: todo cambio pasa por PR → CI → aprobación → `terraform apply`. |
-| **Luca** (cuenta personal) | `roles/viewer` | Proyecto | Ídem Gastón. |
+| **Facundo** (cuenta personal) | Administrador de facturación | Cuenta de facturación (prueba gratuita) | Es el titular de la prueba gratuita. Hace falta para vincular el proyecto a la cuenta de facturación y para crear el presupuesto (`google_billing_budget`) en el bootstrap. |
+| **Gastón** (cuenta personal) | `roles/viewer` (asignado a mano con `gcloud`) | Proyecto | Ver recursos, logs y métricas para revisar y depurar. No puede cambiar nada: todo cambio pasa por PR → CI → aprobación → `terraform apply`. |
+| **Luca** (cuenta personal) | `roles/viewer` (asignado a mano con `gcloud`) | Proyecto | Ídem Gastón. |
 | **SA de la app** `sa-quantumquack-dev` | `roles/storage.objectCreator` con condición `resource.name.startsWith(".../objects/uploads/")` | Bucket de fotos (`*-quantumquack-dev-claims`) | La URL firmada se emite en nombre de esta SA, así que la SA tiene que poder crear el objeto. Solo **crear** (no leer, listar ni borrar) y solo bajo `uploads/`. |
 | **SA de la app** | `roles/iam.serviceAccountTokenCreator` | Ella misma (no el proyecto) | Permite llamar a `signBlob` para firmar las URL V4 sin descargar una clave JSON. Está acotado a sí misma, así que no puede firmar ni emitir tokens como otra SA. |
 | **SA de CI** `sa-ci-github` | `roles/iam.workloadIdentityUser` | SA de CI | Permite que GitHub Actions la impersone vía WIF. El miembro es `principalSet://.../attribute.repository/<owner/repo>`: solo el repo del equipo. |
