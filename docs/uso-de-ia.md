@@ -7,7 +7,7 @@ El proyecto se hizo con **desarrollo asistido por IA**. Este documento cuenta co
 | Herramienta | Quién | Para qué |
 |---|---|---|
 | **Claude (Anthropic)**, app de escritorio con acceso a la terminal y al navegador | Facundo | Código de la app, Terraform, workflows de GitHub Actions, depuración de errores, revisión de las entregas del equipo, organización del Trello, documentación y la presentación |
-| _completar_ | Gastón | _completar (ej.: diagrama, matriz IAM, evidencias de seguridad)_ |
+| **Claude (Anthropic)**, con acceso a GitHub, Chrome y Cloud Shell | Gastón | Entender las consignas de las tarjetas del Trello y armar el paso a paso de cada tarea. Además, bajo mi supervisión, generó el diagrama en draw.io (v1 y final), la matriz IAM, `seguridad.md`, `ciclo-de-vida.md` y las evidencias de seguridad: corrió las pruebas en Cloud Shell y sacó las capturas. Yo revisé cada entrega, pedí correcciones y decidí qué se subía a main. |
 | **Claude (Anthropic)**, app con acceso a Google Sheets, al repo y al navegador | Luca | Armar la planilla FinOps (buscar los precios oficiales de Cloud Storage, fórmulas, gráficos y ajustes según la revisión del equipo), recorrer la consola en la prueba de observabilidad (subidas de prueba, `/api/boom`, capturas) y redactar `observabilidad.md`, el informe FinOps, la justificación de proveedor v2 y el guion de mis slides. Los datos del costo real, los tiempos de la alerta y la experiencia del equipo los aporté y revisé yo |
 | Herramientas automáticas en CI (no son IA generativa) | Todos | Checkov, tflint, Trivy e Infracost revisan cada PR |
 
