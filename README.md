@@ -19,13 +19,15 @@ infra/bootstrap/          Lo único que se aplica a mano: state, WIF, SA de CI, 
 infra/modules/            registry · bucket · container_service · lb · monitoring
 infra/envs/dev/           Une los módulos
 .github/workflows/        ci.yml (PR) · deploy.yml (main) · destroy.yml (manual)
-docs/                     Diagrama, matriz IAM, informe FinOps
+docs/                     Diagramas, decisiones, runbook, seguridad, FinOps, uso de IA
 ```
+
+**Documentación:** [Arquitectura y decisiones](docs/arquitectura.md) · [Runbook y recuperación ante fallos](docs/runbook.md) · [Seguridad](docs/seguridad.md) · [Matriz IAM](docs/matriz-iam.md) · [Observabilidad](docs/observabilidad.md) · [Ciclo de vida](docs/ciclo-de-vida.md) · [FinOps](docs/finops/) · [Uso de IA](docs/uso-de-ia.md) · [Presentación](docs/presentacion/)
 
 ## Puesta en marcha (una sola vez)
 
 ### 1. Cuenta y proyecto de GCP
-1. Uno solo del equipo abre la prueba gratuita de GCP (USD 300, 90 días). Tiene que no haber usado nunca la prueba ni pagado Google Cloud. **No pasar a cuenta paga**: mientras sea prueba, Google no cobra nada a la tarjeta.
+1. Uno del equipo pone la cuenta de facturación. Usamos una cuenta paga: todo queda dentro del free tier y el bootstrap crea un presupuesto de USD 1 (sin contar créditos) que avisa por mail si algo empieza a cobrar.
 2. Crear el proyecto (ej. `quantumquack-ucu`) y vincularlo a esa cuenta de facturación.
 3. IAM → dar acceso a los otros dos integrantes (rol `Editor` alcanza para el curso; la matriz IAM explica por qué la app y CI no lo usan).
 
@@ -92,4 +94,4 @@ Antes del primer commit: `terraform fmt -recursive infra`.
 | Cloud Storage | `us-central1` Standard, MB de datos; se borra antes de los 30 días (no llega a Coldline) |
 | Logging | Retención 7 días, muy por debajo de los 50 GiB gratis |
 | Monitoring, WIF, IAM, presupuestos | Sin costo |
-| Load balancer | **Único recurso con costo por hora**. Solo existe unas horas el día de la demo; lo cubre el crédito de prueba |
+| Load balancer | **Único recurso con costo por hora**. Solo existe unas horas el día de la demo (9 min de prueba el 18/11 ≈ USD 0,004) |
