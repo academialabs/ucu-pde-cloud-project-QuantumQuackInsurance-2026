@@ -24,6 +24,25 @@ docs/                     Diagramas, decisiones, runbook, seguridad, FinOps, uso
 
 **Documentación:** [Arquitectura y decisiones](docs/arquitectura.md) · [Runbook y recuperación ante fallos](docs/runbook.md) · [Seguridad](docs/seguridad.md) · [Matriz IAM](docs/matriz-iam.md) · [Observabilidad](docs/observabilidad.md) · [Ciclo de vida](docs/ciclo-de-vida.md) · [FinOps](docs/finops/) · [Uso de IA](docs/uso-de-ia.md) · [Presentación](docs/presentacion/)
 
+## Integraciones
+
+| Integración | Para qué | Cómo se autentica | Dónde está |
+|---|---|---|---|
+| GitHub Actions → Google Cloud | Deploy y destroy con Terraform | Workload Identity Federation (OIDC, sin claves), restringido a este repo | `infra/bootstrap/main.tf`, `.github/workflows/` |
+| GitHub Actions → Artifact Registry | Subir la imagen con el tag del commit (se guardan 3 versiones) | Mismo token de WIF (`gcloud auth configure-docker`) | `.github/workflows/deploy.yml`, `infra/modules/registry/main.tf` |
+| Terraform → Cloud Storage (state) | State remoto con lock y versionado | SA de CI vía WIF | `infra/envs/dev/backend.tf`, `infra/bootstrap/main.tf` |
+| GitHub Environments | Aprobación manual antes de cada deploy y destroy | *Required reviewers* del environment `dev` | `.github/workflows/deploy.yml`, `destroy.yml` |
+| Cloud Run → Cloud Storage | Firmar URLs V4 de subida | SA propia + `signBlob` sobre sí misma (sin clave JSON) | `infra/modules/container_service/main.tf`, `app/server.js` |
+| Navegador → Cloud Storage | `PUT` directo de la foto | URL firmada de 5 min con tipo y tamaño firmados; CORS en el bucket | `infra/modules/bucket/main.tf` |
+| Load balancer → Cloud Run | Entrada HTTP para la demo | NEG serverless (`enable_lb`) | `infra/modules/lb/main.tf` |
+| Cloud Run → Cloud Logging | Logs de la app y de las requests (retención 7 días) | Automático (SA del servicio) | `infra/modules/monitoring/main.tf` |
+| Cloud Monitoring → mail | Alerta de 5xx | Canales de email | `infra/modules/monitoring/main.tf` |
+| Facturación → mail | Presupuesto de USD 1 (50/80/100 %) | Canales de email | `infra/bootstrap/main.tf` |
+| Checkov, tflint, Trivy | Seguridad de Terraform y de la imagen en cada PR | Acciones de GitHub (Trivy fijada por SHA) | `.github/workflows/ci.yml` |
+| Infracost | Costo estimado del cambio en el PR | Secret `INFRACOST_API_KEY` (opcional) | `.github/workflows/ci.yml` |
+
+Detalle de cada decisión en [docs/arquitectura.md](docs/arquitectura.md) y operación en [docs/runbook.md](docs/runbook.md).
+
 ## Puesta en marcha (una sola vez)
 
 ### 1. Cuenta y proyecto de GCP
