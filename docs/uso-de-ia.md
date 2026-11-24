@@ -19,13 +19,14 @@ El proyecto se hizo con **desarrollo asistido por IA**. Este documento cuenta co
 - Los tres workflows.
 - El README, `arquitectura.md`, `runbook.md` y este documento.
 - La estructura y el texto de las slides.
+- El diagrama en draw.io, la matriz IAM, `seguridad.md`, `ciclo-de-vida.md`, `observabilidad.md`, la planilla e informe FinOps y la justificación de proveedor, cada uno bajo la supervisión del integrante responsable.
 
 **Lo decidimos o hicimos nosotros:**
 - Las restricciones del proyecto (gasto USD 0, GCP, alcance).
 - Crear y configurar la cuenta, el proyecto y el repo, y aplicar el bootstrap.
-- Aprobar cada deploy y correr las pruebas de la demo.
-- Las capturas y evidencias.
-- El diagrama en draw.io, la matriz IAM, la planilla FinOps y la justificación del proveedor, con revisión de la IA.
+- Aprobar cada deploy y supervisar las pruebas en la nube real (subidas, alertas, accesos denegados).
+- Aportar los datos reales: costo de noviembre, tiempos de la alerta, experiencia del equipo.
+- Revisar cada entrega, pedir correcciones y decidir qué se subía a `main`.
 - Defender cada decisión en la presentación.
 
 **Errores de la IA que detectamos y corregimos** (prueba de que la revisión humana hizo falta):
