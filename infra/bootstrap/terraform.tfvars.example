@@ -1,6 +1,6 @@
 # Copiar a terraform.tfvars (está en .gitignore) y aplicar UNA vez a mano.
-project_id      = "quantumquack-ucu"
-github_repo     = "usuario/quantumquack"
+project_id      = "tu-proyecto-id"     # los IDs de GCP son únicos: elegí uno propio
+github_repo     = "tu-usuario/tu-repo" # el repo desde el que corre GitHub Actions
 billing_account = "XXXXXX-XXXXXX-XXXXXX"
 alert_emails    = ["integrante1@correo.ucu.edu.uy", "integrante2@correo.ucu.edu.uy", "integrante3@correo.ucu.edu.uy"]
-budget_usd      = 5
+budget_usd      = 1

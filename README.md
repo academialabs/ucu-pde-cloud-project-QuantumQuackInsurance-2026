@@ -43,11 +43,24 @@ docs/                     Diagramas, decisiones, runbook, seguridad, FinOps, uso
 
 Detalle de cada decisión en [docs/arquitectura.md](docs/arquitectura.md) y operación en [docs/runbook.md](docs/runbook.md).
 
+## ¿Quién puede hacer la demo?
+
+| Situación | Qué hace falta | Cómo |
+|---|---|---|
+| **Integrante con acceso a este repo** | Nada que instalar: navegador, `curl` y aprobar el deploy | Sección [Día de la demo](#día-de-la-demo) y guía paso a paso en [docs/runbook.md](docs/runbook.md#6-día-de-la-demo-checklist) |
+| **Cualquier otra persona** (incluida la copia en academialabs) | Cuenta de GCP con facturación, `gcloud`, `terraform` ≥ 1.9 y un repo propio en GitHub (fork o copia) | Seguir **Puesta en marcha** completa en su propia cuenta (~30 min). Todo queda dentro del free tier, salvo el LB mientras está prendido |
+
+> La conexión entre GitHub y GCP (Workload Identity Federation) solo acepta el repo indicado en `github_repo` del bootstrap. Por eso una copia del repo no puede desplegar en nuestro proyecto: cada uno despliega en el suyo.
+>
+> La app no corre sola en la compu: necesita un bucket real y una service account para firmar las URLs. Lo que se reproduce en cualquier máquina es el **despliegue completo** con Terraform y GitHub Actions.
+
 ## Puesta en marcha (una sola vez)
+
+En los comandos, reemplazar `<PROJECT_ID>` por el ID de tu proyecto (el nuestro es `quantumquack-ucu`; los IDs de GCP son únicos en todo el mundo, así que hay que elegir uno propio).
 
 ### 1. Cuenta y proyecto de GCP
 1. Uno del equipo pone la cuenta de facturación. Usamos una cuenta paga: todo queda dentro del free tier y el bootstrap crea un presupuesto de USD 1 (sin contar créditos) que avisa por mail si algo empieza a cobrar.
-2. Crear el proyecto (ej. `quantumquack-ucu`) y vincularlo a esa cuenta de facturación.
+2. Crear el proyecto (`<PROJECT_ID>`) y vincularlo a esa cuenta de facturación. Quien corre el bootstrap necesita rol **Owner** en el proyecto y permiso para crear presupuestos en la cuenta de facturación.
 3. IAM → dar acceso a los otros dos integrantes (rol `Editor` alcanza para el curso; la matriz IAM explica por qué la app y CI no lo usan).
 
 ### 2. Repo de GitHub
@@ -58,10 +71,12 @@ Detalle de cada decisión en [docs/arquitectura.md](docs/arquitectura.md) y oper
 ```bash
 gcloud auth login
 gcloud auth application-default login
-gcloud auth application-default set-quota-project quantumquack-ucu
+gcloud auth application-default set-quota-project <PROJECT_ID>
 
 cd infra/bootstrap
-cp terraform.tfvars.example terraform.tfvars   # completar
+cp terraform.tfvars.example terraform.tfvars
+# completar: project_id, github_repo ("usuario/repo" desde el que corre Actions),
+#            billing_account, alert_emails, budget_usd
 terraform init
 terraform apply
 ```
@@ -72,12 +87,15 @@ Anotar los outputs.
 |---|---|---|
 | Secret | `GCP_WIF_PROVIDER` | output `wif_provider` |
 | Secret | `GCP_CI_SA` | output `ci_service_account` |
-| Variable | `GCP_PROJECT_ID` | `quantumquack-ucu` |
+| Variable | `GCP_PROJECT_ID` | `<PROJECT_ID>` |
 | Variable | `ALERT_EMAILS` | `["a@x.com","b@x.com","c@x.com"]` |
 | Variable | `ENABLE_LB` | `false` (poner `true` solo el día de la demo) |
 | Secret (opcional) | `INFRACOST_API_KEY` | clave gratis de infracost.io |
 
 Antes del primer commit: `terraform fmt -recursive infra`.
+
+### 5. Primer deploy y validación
+Actions → **Deploy** → *Run workflow* → aprobar en el environment `dev`. El resumen del job muestra la URL. Validar con las pruebas de [docs/runbook.md](docs/runbook.md#4-validación-smoke-tests).
 
 ## Uso diario
 
