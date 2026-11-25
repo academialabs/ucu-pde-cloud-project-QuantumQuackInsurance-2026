@@ -1,17 +1,17 @@
-# Demo en vivo · guía para quien la presenta (Windows)
+# Demo en vivo · guía para Luca (Windows)
 
-Todo lo necesario para hacer la demo de 5 minutos sin haber armado la infraestructura. Los comandos son para **PowerShell en Windows**; los equivalentes para Mac/Linux están en [`runbook.md`](runbook.md#4-validación-smoke-tests).
+La demo la presenta **Luca Benenati**. Acá está todo lo necesario para hacer la demo de 5 minutos sin haber armado la infraestructura. Los comandos son para **PowerShell en Windows**; los equivalentes para Mac/Linux están en [`runbook.md`](runbook.md#4-validación-smoke-tests).
 
 ## Quién hace qué
 
 | Tarea | Quién | Por qué |
 |---|---|---|
 | Prender el load balancer (`ENABLE_LB=true`) 2 horas antes | **Facundo** | En un repo personal solo el dueño puede cambiar las Variables de GitHub |
-| Aprobar el deploy y pasar la IP del LB | Cualquiera del equipo (reviewer del environment `dev`) | |
-| **La demo en vivo** (los 8 pasos de abajo) | **Quien presenta** | |
+| Aprobar el deploy y pasar la IP del LB | Facundo o Gastón (reviewers del environment `dev`) | |
+| **La demo en vivo** (los 8 pasos de abajo) | **Luca** | |
 | Volver `ENABLE_LB=false` y capturar Facturación después de la defensa | **Facundo** | Variables y facturación son del dueño |
 
-## Checklist del día anterior (quien presenta)
+## Checklist del día anterior (Luca)
 
 - [ ] Puedo entrar a **github.com/facusio/quantumquack** → *Actions* y veo el workflow **Destroy** con el botón *Run workflow*. Si no aparece, Facundo tiene que darme permiso de escritura.
 - [ ] Estoy en **Settings → Environments → dev → Required reviewers** (lo verifica Facundo). Si no, no puedo aprobar el Destroy.
@@ -40,7 +40,7 @@ Todo lo necesario para hacer la demo de 5 minutos sin haber armado la infraestru
    Tiene que responder `ok`. Si no responde, ver [Si algo falla](#si-algo-falla).
 4. Agrandar la letra de PowerShell (Ctrl + rueda del mouse) para que se lea en el proyector.
 
-## La demo (5 minutos)
+## La demo (5 minutos, la hace Luca)
 
 ### 0:00 · Disparar la alerta
 Abrir `http://<IP>/api/boom` en el navegador y recargar **2 o 3 veces**. Se ve un error 500.

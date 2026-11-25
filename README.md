@@ -104,7 +104,7 @@ Actions → **Deploy** → *Run workflow* → aprobar en el environment `dev`. E
 - **Destroy** → Actions → *Destroy* → *Run workflow* → escribir `destroy`.
 
 ## Día de la demo
-> Guía completa para quien presenta, con comandos de PowerShell (Windows), qué decir en cada paso y qué hacer si algo falla: **[docs/demo-en-vivo.md](docs/demo-en-vivo.md)**.
+> La demo la presenta **Luca**. Guía completa, con comandos de PowerShell (Windows), qué decir en cada paso y qué hacer si algo falla: **[docs/demo-en-vivo.md](docs/demo-en-vivo.md)**.
 
 1. Variable `ENABLE_LB=true` y correr *Deploy* a mano: crea el LB en ~3 min y la IP sale en el resumen del job.
 2. **Al principio de la demo**, abrir `<url>/api/boom` un par de veces para disparar la alerta. El mail llega unos **4 minutos** después del primer `/api/boom` (medido el 18/11): casi todo ese tiempo es la demora con la que Cloud Run publica la métrica, y el mail sale a los pocos segundos de abrirse el incidente.
