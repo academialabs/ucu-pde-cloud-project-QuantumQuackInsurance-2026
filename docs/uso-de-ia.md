@@ -66,6 +66,12 @@ Su forma de trabajo fue enviarle a Claude **la captura del mensaje de WhatsApp c
 6. **Experiencia del equipo:** pasarle a Luca sus líneas de experiencia para la justificación del proveedor.
 7. **Uso de IA:** completar su fila en este documento.
 
+Además, usó estos prompts escritos (los tres también los usó Luca):
+
+8. **Corrección por revisión:** "Me dieron este feedback." (Con las correcciones que le pasó el equipo.)
+9. **Repositorio:** "Tenés que hacer el merge a main."
+10. **Presentación:** "Esta es la presentación, decime qué es lo que tengo que decir cuando me toca a mí."
+
 ### Luca (Claude, con acceso a Google Sheets, al repo y al navegador)
 
 1. **Planificación:** "Tengo que hacer esto, ayudame a hacerlo." (Con la lista de tareas que le pasó Facundo: planilla FinOps, observabilidad, justificación e informe.)
