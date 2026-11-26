@@ -38,7 +38,7 @@ El proyecto se hizo con **desarrollo asistido por IA**. Este documento cuenta co
 
 ## 3. Prompts utilizados
 
-Prompts reales, en el orden en que se usaron. Los textos entre comillas están copiados tal cual, con la ortografía corregida; entre paréntesis se aclara el material que se adjuntó.
+Prompts reales, en el orden en que se usaron, agrupados por integrante. Los textos entre comillas están copiados tal cual, con la ortografía corregida; entre paréntesis se aclara el material que se adjuntó.
 
 ### Facundo (Claude, app de escritorio)
 
@@ -53,6 +53,18 @@ Prompts reales, en el orden en que se usaron. Los textos entre comillas están c
 9. **Presentación:** "Vamos directo a la estructura de la presentación, las slides y ta. Lo que sí necesito es que ellos hagan el resto del trabajo."
 10. **Entrega:** el mensaje del profe con los requisitos del repositorio, pegado tal cual.
 11. **Demo:** "Dame todo lo que necesite la persona que vaya a hacer la demo en vivo. Ellos dos tienen Windows."
+
+### Gastón (Claude, con acceso a GitHub, Chrome y Cloud Shell)
+
+Su forma de trabajo fue enviarle a Claude **la captura del mensaje de WhatsApp con la tarea asignada, sin texto adicional**, y seguir el paso a paso que devolvía. Las capturas correspondían a estos pedidos:
+
+1. **Diagrama v1:** armar el diagrama de arquitectura en draw.io a partir de la tarjeta del Trello.
+2. **Correcciones del diagrama:** el mensaje con los errores a corregir (presupuesto de USD 1 en vez de USD 5 y cuenta paga en vez de prueba gratuita) y subirlo con una PR, con el PNG en `docs/`.
+3. **Escaneo de la imagen:** correr Trivy sobre la imagen y reportar lo que encontrara (de ahí salieron los CVE de OpenSSL).
+4. **Matriz IAM:** documentar qué puede y qué no puede cada identidad.
+5. **Evidencias de seguridad:** probar en Cloud Shell el bucket privado, el rechazo del PDF, el Content-Type manipulado y la prevención de acceso público, y sacar las capturas.
+6. **Experiencia del equipo:** pasarle a Luca sus líneas de experiencia para la justificación del proveedor.
+7. **Uso de IA:** completar su fila en este documento.
 
 ### Luca (Claude, con acceso a Google Sheets, al repo y al navegador)
 
